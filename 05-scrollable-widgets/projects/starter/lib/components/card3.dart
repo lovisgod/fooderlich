@@ -32,7 +32,7 @@ class Card3 extends StatelessWidget {
     return Center(
       child: Container(
         constraints: const BoxConstraints.expand(
-          width: 350,
+          width: 330,
           height: 450,
         ),
         decoration: BoxDecoration(
