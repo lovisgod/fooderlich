@@ -1,14 +1,33 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:recipes/data/models/models.dart';
+import 'package:provider/provider.dart';
+import '../../network/recipe_model.dart';
+import '../../data/models/models.dart';
+import '../../data/memory_repository.dart';
 
+
+import '../../network/recipe_model.dart';
+import '../../network/recipe_model.dart';
 import '../colors.dart';
 
-class RecipeDetails extends StatelessWidget {
-  const RecipeDetails({Key? key}) : super(key: key);
+class RecipeDetails extends StatefulWidget {
+    final Recipe recipe;
+   const RecipeDetails(
+      {Key? key,  required this.recipe}
+      ) : super(key: key);
 
   @override
+  _RecipeDetailsState createState() => _RecipeDetailsState();
+}
+
+class _RecipeDetailsState extends State<RecipeDetails> {
+  @override
   Widget build(BuildContext context) {
+    // we use provider because we are not
+    // using the repository in the whole widget
+    final repository = Provider.of<MemoryRepository>(context);
     final size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -25,7 +44,7 @@ class RecipeDetails extends StatelessWidget {
                       child: CachedNetworkImage(
                         // TODO 1
                         imageUrl:
-                            'https://www.edamam.com/web-img/e42/e42f9119813e890af34c259785ae1cfb.jpg',
+                           widget.recipe.image ?? '',
                         alignment: Alignment.topLeft,
                         fit: BoxFit.fill,
                         width: size.width,
@@ -46,24 +65,23 @@ class RecipeDetails extends StatelessWidget {
                 const SizedBox(
                   height: 16,
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 16.0),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
                   child: Text(
-                    // TODO 2
-                    'Chicken Vesuvio',
-                    style: TextStyle(
+                    widget.recipe.label ?? '',
+                    style: const TextStyle(
                         fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(
                   height: 16,
                 ),
-                const Padding(
-                    padding: EdgeInsets.only(left: 16.0),
-                    child: Chip(
-                      // TODO 3
-                      label: Text('16CAL'),
-                    )),
+             Padding(
+               padding: const EdgeInsets.only(left: 16.0),
+            child: Chip(
+              label: Text(getCalories(widget.recipe.calories)),
+            ),
+          ),
                 const SizedBox(
                   height: 16,
                 ),
@@ -76,6 +94,8 @@ class RecipeDetails extends StatelessWidget {
                     ),
                     onPressed: () {
                       // TODO 4
+                      repository.insertRecipe(widget.recipe);
+
                       Navigator.pop(context);
                     },
                     icon: SvgPicture.asset(
